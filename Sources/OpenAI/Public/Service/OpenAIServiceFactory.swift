@@ -16,7 +16,6 @@ public class OpenAIServiceFactory {
    /// - Parameters:
    ///   - apiKey: The API key required for authentication.
    ///   - organizationID: The optional organization ID for multi-tenancy (default is `nil`).
-   ///   - configuration: The URL session configuration to be used for network calls (default is `.default`).
    ///   - decoder: The JSON decoder to be used for parsing API responses (default is `JSONDecoder.init()`).
    ///   - debugEnabled: If `true` service prints event on DEBUG builds, default to `false`.
 
@@ -24,7 +23,6 @@ public class OpenAIServiceFactory {
    public static func service(
       apiKey: String,
       organizationID: String? = nil,
-      configuration: URLSessionConfiguration = .default,
       decoder: JSONDecoder = .init(),
       debugEnabled: Bool = false)
       -> OpenAIService
@@ -32,7 +30,6 @@ public class OpenAIServiceFactory {
       DefaultOpenAIService(
          apiKey: apiKey,
          organizationID: organizationID,
-         configuration: configuration,
          decoder: decoder,
          debugEnabled: debugEnabled)
    }
@@ -43,25 +40,23 @@ public class OpenAIServiceFactory {
    ///
    /// - Parameters:
    ///   - azureConfiguration: The AzureOpenAIConfiguration.
-   ///   - urlSessionConfiguration: The URL session configuration to be used for network calls (default is `.default`).
    ///   - decoder: The JSON decoder to be used for parsing API responses (default is `JSONDecoder.init()`).
    ///   - debugEnabled: If `true` service prints event on DEBUG builds, default to `false`.
    ///
    /// - Returns: A fully configured object conforming to `OpenAIService`.
    public static func service(
       azureConfiguration: AzureOpenAIConfiguration,
-      urlSessionConfiguration: URLSessionConfiguration = .default,
       decoder: JSONDecoder = .init(),
       debugEnabled: Bool = false)
       -> OpenAIService
    {
       DefaultOpenAIAzureService(
          azureConfiguration: azureConfiguration,
-         urlSessionConfiguration: urlSessionConfiguration,
          decoder: decoder,
          debugEnabled: debugEnabled)
    }
-   
+
+#if !os(Linux)
    // MARK: AIProxy
 
    /// Creates and returns an instance of `OpenAIService` for use with aiproxy.pro
@@ -96,7 +91,8 @@ public class OpenAIServiceFactory {
         debugEnabled: debugEnabled
       )
    }
-   
+#endif
+
    // MARK: Custom URL
 
    /// Creates and returns an instance of `OpenAIService`.
@@ -140,7 +136,6 @@ public class OpenAIServiceFactory {
    public static func service(
       apiKey: String,
       overrideBaseURL: String,
-      configuration: URLSessionConfiguration = .default,
       proxyPath: String? = nil,
       overrideVersion: String? = nil,
       extraHeaders: [String: String]? = nil,
@@ -153,7 +148,6 @@ public class OpenAIServiceFactory {
          proxyPath: proxyPath,
          overrideVersion: overrideVersion,
          extraHeaders: extraHeaders,
-         configuration: configuration,
          debugEnabled: debugEnabled)
    }
 }

@@ -9,7 +9,7 @@ import Foundation
 
 struct LocalModelService: OpenAIService {
    
-   let session: URLSession
+   let httpClient: HTTPClient
    let decoder: JSONDecoder
    let openAIEnvironment: OpenAIEnvironment
 
@@ -23,11 +23,10 @@ struct LocalModelService: OpenAIService {
       baseURL: String,
       proxyPath: String? = nil,
       overrideVersion: String? = nil,
-      configuration: URLSessionConfiguration = .default,
       decoder: JSONDecoder = .init(),
       debugEnabled: Bool)
    {
-      self.session = URLSession(configuration: configuration)
+      self.httpClient = AsyncHTTPClientAdapter.createDefault()
       self.decoder = decoder
       self.apiKey = apiKey
       self.openAIEnvironment = OpenAIEnvironment(baseURL: baseURL, proxyPath: proxyPath, version: overrideVersion ?? "v1")
@@ -52,7 +51,7 @@ struct LocalModelService: OpenAIService {
    {
       var chatParameters = parameters
       chatParameters.stream = false
-      let request = try LocalModelAPI.chat.request(apiKey: apiKey, openAIEnvironment: openAIEnvironment, organizationID: nil, method: .post, params: chatParameters)
+      let request = try LocalModelAPI.chat.request(apiKey: apiKey, openAIEnvironment: openAIEnvironment, organizationID: nil, method: HTTPMethod.post, params: chatParameters)
       return try await fetch(debugEnabled: debugEnabled, type: ChatCompletionObject.self, with: request)
    }
    
@@ -63,7 +62,7 @@ struct LocalModelService: OpenAIService {
       var chatParameters = parameters
       chatParameters.stream = true
       chatParameters.streamOptions = .init(includeUsage: true)
-      let request = try LocalModelAPI.chat.request(apiKey: apiKey, openAIEnvironment: openAIEnvironment, organizationID: nil, method: .post, params: chatParameters)
+      let request = try LocalModelAPI.chat.request(apiKey: apiKey, openAIEnvironment: openAIEnvironment, organizationID: nil, method: HTTPMethod.post, params: chatParameters)
       return try await fetchStream(debugEnabled: debugEnabled, type: ChatCompletionChunkObject.self, with: request)
    }
    

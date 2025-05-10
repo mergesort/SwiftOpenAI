@@ -6,14 +6,9 @@
 //
 
 import Foundation
-
-// MARK: HTTPMethod
-
-enum HTTPMethod: String {
-   case post = "POST"
-   case get = "GET"
-   case delete = "DELETE"
-}
+#if os(Linux)
+import FoundationNetworking
+#endif
 
 // MARK: Endpoint
 

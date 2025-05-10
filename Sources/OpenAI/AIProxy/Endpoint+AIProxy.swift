@@ -5,6 +5,8 @@
 //  Created by Lou Zell on 3/26/24.
 //
 
+#if !os(Linux)
+
 import Foundation
 import OSLog
 import DeviceCheck
@@ -233,4 +235,5 @@ private func copy_mac_address() -> CFData? {
 
     return nil
 }
+#endif
 #endif
